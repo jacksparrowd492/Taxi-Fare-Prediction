@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxi Fare Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Taxi Fare Prediction</h1>
+
+    <form action="/predict" method="POST">
+        <label for="pickup_location">Pickup Location:</label>
+        <input type="text" id="pickup_location" name="pickup_location" required><br>
+
+        <label for="dropoff_location">Dropoff Location:</label>
+        <input type="text" id="dropoff_location" name="dropoff_location" required><br>
+
+        <label for="vehicle_type">Vehicle Type:</label>
+        <select id="vehicle_type" name="vehicle_type" required>
+            <option value="">Select a vehicle</option>
+            <option value="SUV">SUV</option>
+            <option value="Hatchback">Hatchback</option>
+            <option value="Sedan">Sedan</option>
+            <option value="Minivan">Minivan</option>
+            <option value="Auto">Auto</option>
+        </select><br>
+
+        <label for="time_of_day">Time of Day:</label>
+        <input type="text" id="time_of_day" name="time_of_day" required><br>
+
+        <button type="submit">Predict Fare</button>
+    </form>
+
+    <h2>Map and Traffic Conditions</h2>
+    <div id="map"></div>
+
+    <script>
+        mapboxgl.accessToken = '{{ mapbox_access_token }}';
+        var map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/streets-v11', // style URL
+            center: [ 76.958885, 11.017363], // starting position [lng, lat] (Example: Chennai)
+            zoom: 10 // starting zoom
+        });
+
+        // Add traffic layer to the map
+        map.on('load', function() {
+            map.addLayer({
+                id: 'traffic',
+                type: 'line',
+                source: {
+                    type: 'vector',
+                    url: 'mapbox://mapbox.mapbox-traffic-v1'
+                },
+                'source-layer': 'traffic'
+            });
+        });
+    </script>
+</body>
+</html>
